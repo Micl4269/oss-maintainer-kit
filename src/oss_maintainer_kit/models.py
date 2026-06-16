@@ -8,6 +8,36 @@ Severity = Literal["pass", "warn", "fail"]
 
 
 @dataclass(frozen=True)
+class GitHubSignals:
+    full_name: str
+    url: str
+    description: str | None
+    stars: int
+    forks: int
+    watchers: int
+    open_issues: int
+    default_branch: str
+    latest_release: str | None
+    latest_release_url: str | None
+    pushed_at: str | None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "full_name": self.full_name,
+            "url": self.url,
+            "description": self.description,
+            "stars": self.stars,
+            "forks": self.forks,
+            "watchers": self.watchers,
+            "open_issues": self.open_issues,
+            "default_branch": self.default_branch,
+            "latest_release": self.latest_release,
+            "latest_release_url": self.latest_release_url,
+            "pushed_at": self.pushed_at,
+        }
+
+
+@dataclass(frozen=True)
 class Check:
     id: str
     title: str
@@ -29,6 +59,7 @@ class AuditReport:
     profile: str
     checks: list[Check]
     notes: list[str] = field(default_factory=list)
+    github_signals: GitHubSignals | None = None
 
     @property
     def score(self) -> int:
@@ -65,6 +96,7 @@ class AuditReport:
                 for check in self.checks
             ],
             "notes": self.notes,
+            "github_signals": self.github_signals.to_dict() if self.github_signals else None,
         }
 
 
@@ -82,4 +114,3 @@ class TriageBrief:
             "missing_information": self.missing_information,
             "maintainer_actions": self.maintainer_actions,
         }
-

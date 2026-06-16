@@ -22,6 +22,24 @@ def render_audit_markdown(report: AuditReport) -> str:
         "",
     ]
 
+    if report.github_signals is not None:
+        signals = report.github_signals
+        lines.extend(
+            [
+                "## Public GitHub Signals",
+                "",
+                f"- Repository: [{signals.full_name}]({signals.url})",
+                f"- Stars: {signals.stars}",
+                f"- Forks: {signals.forks}",
+                f"- Watchers: {signals.watchers}",
+                f"- Open issues: {signals.open_issues}",
+                f"- Default branch: `{signals.default_branch}`",
+                f"- Latest release: {signals.latest_release or 'none'}",
+                f"- Last push: {signals.pushed_at or 'unknown'}",
+                "",
+            ]
+        )
+
     by_category: dict[str, list[Check]] = defaultdict(list)
     for check in report.checks:
         by_category[check.category].append(check)
@@ -90,4 +108,3 @@ def render_triage_markdown(brief: TriageBrief) -> str:
 
 def render_triage_json(brief: TriageBrief) -> str:
     return json.dumps(brief.to_dict(), indent=2, sort_keys=True) + "\n"
-

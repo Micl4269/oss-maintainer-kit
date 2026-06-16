@@ -4,8 +4,10 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from oss_maintainer_kit.audit import audit_repository, build_triage_brief
+from oss_maintainer_kit.models import GitHubSignals
 
 
 class AuditRepositoryTests(unittest.TestCase):
@@ -48,6 +50,27 @@ class AuditRepositoryTests(unittest.TestCase):
 
             self.assertEqual(git_check.severity, "warn")
             self.assertEqual(git_check.evidence, "git initialized with no commits")
+
+    def test_audit_includes_optional_github_signals(self) -> None:
+        signals = GitHubSignals(
+            full_name="owner/repo",
+            url="https://github.com/owner/repo",
+            description="Example",
+            stars=12,
+            forks=3,
+            watchers=12,
+            open_issues=4,
+            default_branch="main",
+            latest_release="v1.0.0",
+            latest_release_url="https://github.com/owner/repo/releases/tag/v1.0.0",
+            pushed_at="2026-06-16T00:00:00Z",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("oss_maintainer_kit.audit.fetch_github_signals", return_value=signals):
+                report = audit_repository(Path(tmp), github_repo="owner/repo", github_token="token")
+
+        self.assertEqual(report.github_signals, signals)
+        self.assertEqual(report.to_dict()["github_signals"]["stars"], 12)  # type: ignore[index]
 
     def _write_complete_repo(self, repo: Path) -> None:
         for filename in [
