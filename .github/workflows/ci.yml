@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,6 +22,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Run unit tests
         run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Scan tracked files for secrets
+        run: PYTHONPATH=src python -m oss_maintainer_kit security-scan --repo .
       - name: Audit this repository
         run: PYTHONPATH=src python -m oss_maintainer_kit audit --repo . --fail-under 85
-

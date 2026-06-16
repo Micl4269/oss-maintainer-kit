@@ -41,13 +41,14 @@ outside contributors and AI-assisted maintenance workflows.
 
 ### 0.2
 
-- Add more checks for release tags, package publish metadata, and README examples.
-- Add an optional GitHub API mode for stars, forks, releases, and open issue counts.
-- Add SARIF or check-run output for GitHub code scanning style reporting.
+- Add optional GitHub API mode for stars, forks, releases, and open issue counts.
+- Add a scheduled report workflow that opens or updates a maintainer dashboard issue.
+- Add a dependency-free tracked-file secret scan and CI gate.
+- Add repository controls for security-sensitive files.
 
 ### 0.3
 
 - Add optional AI-assisted triage behind explicit maintainer-owned repo checks.
 - Add configurable scoring rules.
-- Add a scheduled report workflow that opens or updates a maintainer dashboard issue.
-
+- Add SARIF or check-run output for GitHub code scanning style reporting.
+- Add more checks for package publish metadata and README examples.
