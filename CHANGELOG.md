@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.3.0] - 2026-06-16
+
 ### Added
 
 - Public contributor lead discovery command and outreach guide for manual,
   non-spam contributor recruiting.
+- Recent commit activity in public GitHub usage signals, added through the
+  first merged external contributor PR.
 
 ## [0.2.0] - 2026-06-16
 

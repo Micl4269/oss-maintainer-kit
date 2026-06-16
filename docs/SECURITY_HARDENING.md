@@ -30,7 +30,7 @@ trufflehog git file://$PWD --no-update --fail --results=verified,unknown
 semgrep scan --config .semgrep.yml --error .
 ```
 
-`pip-audit` is useful once the project adds runtime dependencies. At v0.2.0 the
+`pip-audit` is useful once the project adds runtime dependencies. At v0.3.0 the
 package has no runtime dependencies, so dependency audit exposure is limited to
 the Python and GitHub Actions environments.
 

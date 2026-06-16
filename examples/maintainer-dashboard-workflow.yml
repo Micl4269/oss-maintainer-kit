@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Generate readiness report
-        uses: Micl4269/oss-maintainer-kit@v0.2.0
+        uses: Micl4269/oss-maintainer-kit@v0.3.0
         with:
           repo-path: "."
           output: "maintainer-readiness-report.md"
@@ -56,4 +56,3 @@ jobs:
               --title "Maintainer dashboard" \
               --body-file maintainer-dashboard.md
           fi
-

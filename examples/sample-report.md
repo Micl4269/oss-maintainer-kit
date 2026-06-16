@@ -18,8 +18,9 @@ Score: **98/100**
 - Watchers: 0
 - Open issues: 4
 - Default branch: `main`
-- Latest release: v0.2.0
+- Latest release: v0.3.0
 - Last push: 2026-06-16T02:45:16Z
+- Recent commits (last 30): 8
 
 ## Codex for OSS
 

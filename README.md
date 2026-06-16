@@ -125,7 +125,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - uses: Micl4269/oss-maintainer-kit@v0.2.0
+      - uses: Micl4269/oss-maintainer-kit@v0.3.0
         with:
           repo-path: "."
           output: "maintainer-readiness-report.md"
