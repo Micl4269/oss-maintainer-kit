@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a maintainer workflow or audit check.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Maintainer workflow
+      description: What maintenance job should this make easier?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What should the maintainer see or receive?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+

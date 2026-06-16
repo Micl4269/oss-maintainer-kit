@@ -1,0 +1,36 @@
+name: OSS Maintainer Kit
+description: Audit repository maintainer readiness and generate a markdown report.
+author: Micl4269
+
+inputs:
+  repo-path:
+    description: Path to the repository to audit.
+    required: false
+    default: "."
+  output:
+    description: Markdown report path.
+    required: false
+    default: "maintainer-readiness-report.md"
+  fail-under:
+    description: Optional minimum score. Set to 0 to disable failure.
+    required: false
+    default: "0"
+
+runs:
+  using: composite
+  steps:
+    - name: Run maintainer readiness audit
+      shell: bash
+      run: |
+        set -euo pipefail
+        export PYTHONPATH="$GITHUB_ACTION_PATH/src"
+        args=(
+          audit
+          --repo "${{ inputs.repo-path }}"
+          --output "${{ inputs.output }}"
+        )
+        if [ "${{ inputs.fail-under }}" != "0" ]; then
+          args+=(--fail-under "${{ inputs.fail-under }}")
+        fi
+        python -m oss_maintainer_kit "${args[@]}"
+

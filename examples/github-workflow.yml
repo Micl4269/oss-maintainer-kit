@@ -1,0 +1,21 @@
+name: Maintainer readiness
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: Micl4269/oss-maintainer-kit@v0.1.0
+        with:
+          repo-path: "."
+          output: "maintainer-readiness-report.md"
+          fail-under: "80"
+
