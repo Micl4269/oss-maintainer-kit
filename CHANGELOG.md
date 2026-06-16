@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Added
+
+- Public contributor lead discovery command and outreach guide for manual,
+  non-spam contributor recruiting.
 
 ## [0.2.0] - 2026-06-16
 

@@ -9,6 +9,9 @@ build/
 dist/
 *.egg-info/
 maintainer-readiness-report.md
+contributor-leads*.csv
+contributor-leads*.json
+outreach/
 .gstack/
 .env
 .env.*

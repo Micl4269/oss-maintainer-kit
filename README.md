@@ -16,6 +16,7 @@ It is built for maintainers who need a simple answer:
 - GitHub Action wrapper for scheduled audits.
 - Scheduled maintainer dashboard workflow that updates a stable GitHub issue.
 - Built-in tracked-file secret scan for high-signal credential leaks.
+- Public contributor lead discovery for manual, non-spam outreach.
 - Local Semgrep rules for dangerous Python execution patterns.
 - Issue triage brief generator for labels, missing information, and next steps.
 - Codex for OSS planning guidance for maintainers preparing an application.
@@ -91,6 +92,21 @@ If Semgrep is installed, run the optional static-analysis rules:
 semgrep scan --config .semgrep.yml --error .
 ```
 
+Find public GitHub profile leads from contributors to related repositories:
+
+```bash
+PYTHONPATH=src python -m oss_maintainer_kit contributor-leads \
+  --query "maintainer tools language:Python stars:>10 pushed:>2025-01-01" \
+  --query "repository health language:Python stars:>10 pushed:>2025-01-01" \
+  --exclude-user Micl4269 \
+  --output contributor-leads.csv
+```
+
+This command does not scrape private contact information or send messages. It
+returns public GitHub profile URLs, the source repositories where each person
+was found, and the search query that made the lead relevant. Review every lead
+manually before reaching out.
+
 ## GitHub Action
 
 ```yaml
@@ -152,6 +168,7 @@ or update the dashboard issue.
 - Codex for OSS usage plan
 - Optional public GitHub usage signals
 - Optional scheduled maintainer dashboard issue
+- Optional public contributor lead discovery
 
 ## Codex for OSS Fit
 

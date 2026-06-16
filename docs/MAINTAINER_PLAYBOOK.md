@@ -7,12 +7,14 @@
 3. Review failures first, then warnings.
 4. Triage new issues with the triage command.
 5. Convert accepted issues into small scoped tasks.
-6. Cut releases from passing CI only.
+6. Review contributor leads manually when the issue backlog is ready.
+7. Cut releases from passing CI only.
 
 ```bash
 PYTHONPATH=src python -m oss_maintainer_kit audit --repo . --output maintainer-readiness-report.md
 PYTHONPATH=src python -m oss_maintainer_kit security-scan --repo .
 PYTHONPATH=src python -m oss_maintainer_kit triage --title "Example issue" --body-file issue.md
+PYTHONPATH=src python -m oss_maintainer_kit contributor-leads --exclude-user Micl4269 --output contributor-leads.csv
 ```
 
 ## Maintainer Dashboard Issue
@@ -51,6 +53,13 @@ A PR is ready to merge when:
 - The security scan passes.
 - Docs are updated when behavior changes.
 - Security-sensitive changes have an explicit risk note.
+
+## Contributor Outreach Standard
+
+Use [CONTRIBUTOR_OUTREACH.md](CONTRIBUTOR_OUTREACH.md) when the project needs
+new contributors. Outreach should be manual, relevant, and tied to a specific
+issue. Do not automate direct messages, scrape private contact information, or
+manufacture stars.
 
 ## Release Standard
 

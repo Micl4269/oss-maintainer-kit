@@ -38,6 +38,26 @@ class GitHubSignals:
 
 
 @dataclass(frozen=True)
+class ContributorLead:
+    username: str
+    profile_url: str
+    source_repositories: tuple[str, ...]
+    source_repository_urls: tuple[str, ...]
+    matched_queries: tuple[str, ...]
+    reason: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "username": self.username,
+            "profile_url": self.profile_url,
+            "source_repositories": list(self.source_repositories),
+            "source_repository_urls": list(self.source_repository_urls),
+            "matched_queries": list(self.matched_queries),
+            "reason": self.reason,
+        }
+
+
+@dataclass(frozen=True)
 class Check:
     id: str
     title: str
