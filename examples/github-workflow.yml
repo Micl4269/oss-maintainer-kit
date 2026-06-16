@@ -18,4 +18,4 @@ jobs:
           repo-path: "."
           output: "maintainer-readiness-report.md"
           fail-under: "80"
-
+          github-repo: ${{ github.repository }}

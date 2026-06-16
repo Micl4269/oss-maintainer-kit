@@ -13,6 +13,32 @@ PYTHONPATH=src python -m oss_maintainer_kit audit --repo . --output maintainer-r
 PYTHONPATH=src python -m oss_maintainer_kit triage --title "Example issue" --body-file issue.md
 ```
 
+## Maintainer Dashboard Issue
+
+The dashboard workflow creates or updates one stable GitHub issue titled
+`Maintainer dashboard`. It is meant to be public maintainer evidence: a visible,
+repeatable loop that shows the repo is watched after release.
+
+Required workflow permissions:
+
+```yaml
+permissions:
+  contents: read
+  issues: write
+```
+
+Local dry run:
+
+```bash
+PYTHONPATH=src python -m oss_maintainer_kit audit \
+  --repo . \
+  --github-repo Micl4269/oss-maintainer-kit \
+  --output maintainer-readiness-report.md
+```
+
+Then inspect `maintainer-readiness-report.md`. The workflow only posts to
+GitHub when it runs inside GitHub Actions with `issues: write`.
+
 ## Review Standard
 
 A PR is ready to merge when:
@@ -31,4 +57,3 @@ For each release:
 - Tag the release.
 - Verify the GitHub Action still runs.
 - Publish a short note describing what changed and why maintainers should care.
-

@@ -1,0 +1,59 @@
+name: Maintainer dashboard
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate readiness report
+        uses: Micl4269/oss-maintainer-kit@v0.2.0
+        with:
+          repo-path: "."
+          output: "maintainer-readiness-report.md"
+          fail-under: "80"
+          github-repo: ${{ github.repository }}
+      - name: Create dashboard body
+        shell: bash
+        run: |
+          {
+            echo "# Maintainer dashboard"
+            echo
+            echo "Last updated: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo
+            echo "Source workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo
+            cat maintainer-readiness-report.md
+          } > maintainer-dashboard.md
+      - name: Open or update dashboard issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          issue_number="$(
+            gh issue list \
+              --state open \
+              --search 'Maintainer dashboard in:title' \
+              --json number \
+              --jq '.[0].number // empty'
+          )"
+          if [ -n "$issue_number" ]; then
+            gh issue edit "$issue_number" --body-file maintainer-dashboard.md
+          else
+            gh issue create \
+              --title "Maintainer dashboard" \
+              --body-file maintainer-dashboard.md
+          fi
+
