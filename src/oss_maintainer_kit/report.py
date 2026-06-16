@@ -36,6 +36,7 @@ def render_audit_markdown(report: AuditReport) -> str:
                 f"- Default branch: `{signals.default_branch}`",
                 f"- Latest release: {signals.latest_release or 'none'}",
                 f"- Last push: {signals.pushed_at or 'unknown'}",
+                f"- Recent commits (last 30): {signals.recent_commits_count}",
                 "",
             ]
         )
