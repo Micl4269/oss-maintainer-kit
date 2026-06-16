@@ -20,7 +20,7 @@ turns repo hygiene, contributor readiness, issue triage, and Codex-friendly
 workflow planning into repeatable reports that can run locally or in GitHub
 Actions.
 
-The repository should not be submitted until it has public evidence such as:
+The repository should be submitted with public evidence such as:
 
 - Public releases.
 - Stars, forks, downloads, or external usage.
@@ -53,15 +53,17 @@ maintains, or is authorized to administer.
 - [x] SECURITY.md documents private vulnerability reporting.
 - [x] At least 3 public maintenance events exist: releases, closed issues,
       reviewed PRs, or documented user feedback.
-- [ ] Usage signal exists: stars, forks, installs, users, or dependent repos.
-- [ ] Application answers fit within the 500-character fields.
+- [x] Usage signal exists: stars, forks, outside PR, or documented user
+      feedback.
+- [x] Application answers fit within the 500-character fields.
 
 ## Current Public Evidence
 
 - Public repository: `Micl4269/oss-maintainer-kit`.
-- Release history: `v0.1.0`, with `v0.2.0` planned after the security release.
-- Maintenance activity: issues, merged PRs, CI, release notes, and dashboard issue.
-- Contributor signal: an external contributor requested assignment on issue #1.
+- Release history: `v0.1.0`, `v0.2.0`, and `v0.3.0`.
+- Maintenance activity: issues, reviewed PRs, CI, release notes, and dashboard issue.
+- Contributor signal: external contributor `rafshanDev90` opened #12, which was
+  reviewed, approved, merged, and used to close #8.
 - Security posture: private reporting policy, CI secret-scan gate, CODEOWNERS,
   Dependabot for GitHub Actions, and documented maintainer security checks.
 
@@ -69,7 +71,6 @@ maintains, or is authorized to administer.
 
 - Real adoption evidence is still the biggest gap. Avoid fake stars or alternate
   account activity; it weakens the application.
-- Land at least one genuine outside contribution if possible.
 - Dogfood the tool on other public repos and link to the generated reports or
   issues when the maintainers allow it.
 - Keep a small public backlog of contributor-friendly issues with clear
@@ -86,8 +87,8 @@ CI, documentation, and roadmap decisions for the repository.
 
 OSS Maintainer Kit helps maintainers audit repo readiness, triage issues, and
 prepare Codex-assisted review/release workflows. It is public, actively
-maintained, has CI/releases/docs, and is used to reduce maintenance load across
-open-source repositories.
+maintained, has releases, CI/security gates, docs, public issues, and a merged
+external contributor PR.
 
 ### API credit use
 

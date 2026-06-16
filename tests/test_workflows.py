@@ -24,11 +24,10 @@ class WorkflowTests(unittest.TestCase):
             encoding="utf-8"
         )
 
-        self.assertIn("uses: Micl4269/oss-maintainer-kit@v0.2.0", example)
+        self.assertIn("uses: Micl4269/oss-maintainer-kit@v0.3.0", example)
         self.assertIn("issues: write", example)
         self.assertIn("github-repo: ${{ github.repository }}", example)
 
 
 if __name__ == "__main__":
     unittest.main()
-
