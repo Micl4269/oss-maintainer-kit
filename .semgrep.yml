@@ -1,0 +1,27 @@
+rules:
+  - id: python-dangerous-eval
+    message: Avoid eval/exec on dynamic input.
+    severity: ERROR
+    languages: [python]
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+
+  - id: python-subprocess-shell-true
+    message: Avoid subprocess calls with shell=True unless every argument is trusted and documented.
+    severity: WARNING
+    languages: [python]
+    patterns:
+      - pattern: subprocess.$FUNC(..., shell=True, ...)
+
+  - id: python-unsafe-yaml-load
+    message: Use yaml.safe_load instead of yaml.load for untrusted YAML.
+    severity: ERROR
+    languages: [python]
+    pattern: yaml.load(...)
+
+  - id: generic-hardcoded-private-key
+    message: Private key material must not be committed.
+    severity: ERROR
+    languages: [generic]
+    pattern-regex: "-----BEGIN [A-Z ]*PRIVATE KEY-----"

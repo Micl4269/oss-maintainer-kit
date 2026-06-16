@@ -107,7 +107,7 @@ def audit_repository(
         "This audit cannot prove GitHub stars, downloads, or admin permissions. Capture those manually before applying.",
     ]
     if profile != "codex-oss":
-        notes.append(f"Profile '{profile}' uses the same checks in v0.1.0.")
+        notes.append(f"Profile '{profile}' uses the current release checks.")
 
     github_signals = None
     if github_repo:

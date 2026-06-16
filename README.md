@@ -15,9 +15,11 @@ It is built for maintainers who need a simple answer:
 - Optional public GitHub usage signals: stars, forks, open issues, latest release, and recent activity.
 - GitHub Action wrapper for scheduled audits.
 - Scheduled maintainer dashboard workflow that updates a stable GitHub issue.
+- Built-in tracked-file secret scan for high-signal credential leaks.
+- Local Semgrep rules for dangerous Python execution patterns.
 - Issue triage brief generator for labels, missing information, and next steps.
 - Codex for OSS planning guidance for maintainers preparing an application.
-- No runtime dependencies in v0.1.
+- No runtime dependencies.
 
 ## Install
 
@@ -77,6 +79,18 @@ PYTHONPATH=src python -m oss_maintainer_kit triage \
   --body "I get a traceback on Python 3.12"
 ```
 
+Run the security hygiene scan:
+
+```bash
+PYTHONPATH=src python -m oss_maintainer_kit security-scan --repo .
+```
+
+If Semgrep is installed, run the optional static-analysis rules:
+
+```bash
+semgrep scan --config .semgrep.yml --error .
+```
+
 ## GitHub Action
 
 ```yaml
@@ -95,7 +109,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - uses: Micl4269/oss-maintainer-kit@v0.1.0
+      - uses: Micl4269/oss-maintainer-kit@v0.2.0
         with:
           repo-path: "."
           output: "maintainer-readiness-report.md"
@@ -150,6 +164,13 @@ maintainer automation. The intended Codex usage is documented in
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -v
 PYTHONPATH=src python -m oss_maintainer_kit audit --repo .
+PYTHONPATH=src python -m oss_maintainer_kit security-scan --repo .
+```
+
+Optional maintainer security check:
+
+```bash
+semgrep scan --config .semgrep.yml --error .
 ```
 
 ## License

@@ -57,6 +57,32 @@ class CliTests(unittest.TestCase):
         data = json.loads(result.stdout)
         self.assertIn("documentation", data["suggested_labels"])
 
+    def test_security_scan_command_passes_clean_repo(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True, text=True)
+            (repo / "README.md").write_text("hello\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, check=True, capture_output=True, text=True)
+
+            result = self._run_cli("security-scan", "--repo", str(repo))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Security scan passed", result.stdout)
+
+    def test_security_scan_json_format(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True, text=True)
+            (repo / "README.md").write_text("hello\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, check=True, capture_output=True, text=True)
+
+            result = self._run_cli("security-scan", "--repo", str(repo), "--format", "json")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout), [])
+
     def _run_cli(self, *args: str) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         src = Path(__file__).resolve().parents[1] / "src"
