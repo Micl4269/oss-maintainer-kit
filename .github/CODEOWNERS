@@ -1,0 +1,6 @@
+# Security-sensitive automation and policy files should be reviewed by the maintainer.
+/.github/workflows/ @Micl4269
+/.github/dependabot.yml @Micl4269
+/action.yml @Micl4269
+/SECURITY.md @Micl4269
+/src/oss_maintainer_kit/security_scan.py @Micl4269

@@ -1,7 +1,7 @@
 # Codex for OSS Plan
 
 This document is the maintainer evidence plan for applying to OpenAI Codex for
-OSS once the repository has public usage signals.
+OSS once the repository has enough public usage signals.
 
 ## Maintainer Role
 
@@ -44,17 +44,36 @@ maintains, or is authorized to administer.
 
 ## Evidence Checklist Before Applying
 
-- [ ] Public GitHub repository exists under the maintainer account.
+- [x] Public GitHub repository exists under the maintainer account.
 - [ ] Maintainer profile is public.
-- [ ] Repository has at least one tagged release.
-- [ ] README includes install, usage, examples, and maintainer status.
-- [ ] CI passes on main.
-- [ ] Issues and PR templates exist.
-- [ ] SECURITY.md documents private vulnerability reporting.
-- [ ] At least 3 public maintenance events exist: releases, closed issues,
+- [x] Repository has at least one tagged release.
+- [x] README includes install, usage, examples, and maintainer status.
+- [x] CI passes on main.
+- [x] Issues and PR templates exist.
+- [x] SECURITY.md documents private vulnerability reporting.
+- [x] At least 3 public maintenance events exist: releases, closed issues,
       reviewed PRs, or documented user feedback.
 - [ ] Usage signal exists: stars, forks, installs, users, or dependent repos.
 - [ ] Application answers fit within the 500-character fields.
+
+## Current Public Evidence
+
+- Public repository: `Micl4269/oss-maintainer-kit`.
+- Release history: `v0.1.0`, with `v0.2.0` planned after the security release.
+- Maintenance activity: issues, merged PRs, CI, release notes, and dashboard issue.
+- Contributor signal: an external contributor requested assignment on issue #1.
+- Security posture: private reporting policy, CI secret-scan gate, CODEOWNERS,
+  Dependabot for GitHub Actions, and documented maintainer security checks.
+
+## Remaining Qualification Gaps
+
+- Real adoption evidence is still the biggest gap. Avoid fake stars or alternate
+  account activity; it weakens the application.
+- Land at least one genuine outside contribution if possible.
+- Dogfood the tool on other public repos and link to the generated reports or
+  issues when the maintainers allow it.
+- Keep a small public backlog of contributor-friendly issues with clear
+  acceptance criteria.
 
 ## Draft Application Answers
 
@@ -75,4 +94,3 @@ open-source repositories.
 Use API credits for issue triage, PR review checklists, release-note drafts,
 security-review prompts, and maintainer automation for repositories I own or am
 authorized to maintain.
-

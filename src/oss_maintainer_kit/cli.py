@@ -1,17 +1,23 @@
 from __future__ import annotations
 
 import argparse
+import csv
+import io
+import json
 import os
 import sys
 from pathlib import Path
 
 from .audit import audit_repository, build_triage_brief
+from .github import DEFAULT_CONTRIBUTOR_QUERIES, GitHubSignalsError, find_contributor_leads
+from .models import ContributorLead
 from .report import (
     render_audit_json,
     render_audit_markdown,
     render_triage_json,
     render_triage_markdown,
 )
+from .security_scan import scan_repository
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -22,6 +28,10 @@ def main(argv: list[str] | None = None) -> int:
         return _run_audit(args)
     if args.command == "triage":
         return _run_triage(args)
+    if args.command == "security-scan":
+        return _run_security_scan(args)
+    if args.command == "contributor-leads":
+        return _run_contributor_leads(args)
 
     parser.print_help()
     return 1
@@ -72,6 +82,62 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     triage.add_argument("--output", help="Write brief to this path instead of stdout.")
 
+    security_scan = subparsers.add_parser(
+        "security-scan",
+        help="Scan tracked repository files for high-signal secret leaks.",
+    )
+    security_scan.add_argument("--repo", default=".", help="Repository path to scan.")
+    security_scan.add_argument(
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="Scan output format.",
+    )
+
+    contributor_leads = subparsers.add_parser(
+        "contributor-leads",
+        help="Find public GitHub profile leads from contributors to related repositories.",
+    )
+    contributor_leads.add_argument(
+        "--query",
+        action="append",
+        default=[],
+        help=(
+            "GitHub repository search query. Can be passed more than once. "
+            "Defaults to maintainer-tooling Python searches."
+        ),
+    )
+    contributor_leads.add_argument(
+        "--max-repos",
+        type=int,
+        default=10,
+        help="Maximum repositories to inspect per query.",
+    )
+    contributor_leads.add_argument(
+        "--max-contributors-per-repo",
+        type=int,
+        default=5,
+        help="Maximum contributors to inspect per repository.",
+    )
+    contributor_leads.add_argument(
+        "--exclude-user",
+        action="append",
+        default=[],
+        help="GitHub username to exclude from results. Can be passed more than once.",
+    )
+    contributor_leads.add_argument(
+        "--github-token-env",
+        default="GITHUB_TOKEN",
+        help="Environment variable containing a GitHub token for higher rate limits.",
+    )
+    contributor_leads.add_argument(
+        "--format",
+        choices=["csv", "json"],
+        default="csv",
+        help="Lead output format.",
+    )
+    contributor_leads.add_argument("--output", help="Write leads to this path instead of stdout.")
+
     return parser
 
 
@@ -99,6 +165,71 @@ def _run_triage(args: argparse.Namespace) -> int:
     rendered = render_triage_json(brief) if args.format == "json" else render_triage_markdown(brief)
     _write_output(rendered, args.output)
     return 0
+
+
+def _run_security_scan(args: argparse.Namespace) -> int:
+    findings = scan_repository(Path(args.repo))
+    if args.format == "json":
+        rendered = json.dumps([finding.__dict__ for finding in findings], indent=2)
+    elif findings:
+        lines = ["Security scan failed. Potential secrets or sensitive files were found:"]
+        for finding in findings:
+            location = finding.path if finding.line == 0 else f"{finding.path}:{finding.line}"
+            lines.append(f"- {location} [{finding.rule}] {finding.message}")
+        rendered = "\n".join(lines) + "\n"
+    else:
+        rendered = "Security scan passed. No high-signal secrets or sensitive tracked files found.\n"
+    _write_output(rendered, None)
+    return 1 if findings else 0
+
+
+def _run_contributor_leads(args: argparse.Namespace) -> int:
+    token = os.environ.get(args.github_token_env)
+    queries = args.query or list(DEFAULT_CONTRIBUTOR_QUERIES)
+    try:
+        leads = find_contributor_leads(
+            queries=queries,
+            token=token,
+            max_repos=args.max_repos,
+            max_contributors_per_repo=args.max_contributors_per_repo,
+            exclude_users=args.exclude_user,
+        )
+    except GitHubSignalsError as exc:
+        sys.stderr.write(f"Contributor lead search failed: {exc}\n")
+        return 1
+    rendered = (
+        json.dumps([lead.to_dict() for lead in leads], indent=2) + "\n"
+        if args.format == "json"
+        else _render_contributor_leads_csv(leads)
+    )
+    _write_output(rendered, args.output)
+    return 0
+
+
+def _render_contributor_leads_csv(leads: list[ContributorLead]) -> str:
+    output = io.StringIO()
+    fieldnames = [
+        "username",
+        "profile_url",
+        "source_repositories",
+        "source_repository_urls",
+        "matched_queries",
+        "reason",
+    ]
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+    for lead in leads:
+        writer.writerow(
+            {
+                "username": lead.username,
+                "profile_url": lead.profile_url,
+                "source_repositories": "; ".join(lead.source_repositories),
+                "source_repository_urls": "; ".join(lead.source_repository_urls),
+                "matched_queries": "; ".join(lead.matched_queries),
+                "reason": lead.reason,
+            }
+        )
+    return output.getvalue()
 
 
 def _write_output(text: str, output: str | None) -> None:

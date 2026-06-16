@@ -1,0 +1,21 @@
+name: Security hygiene
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Scan tracked files for secrets
+        run: PYTHONPATH=src python -m oss_maintainer_kit security-scan --repo .

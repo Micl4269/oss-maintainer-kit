@@ -4,7 +4,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from oss_maintainer_kit.github import GitHubSignalsError, fetch_github_signals
+from oss_maintainer_kit.github import GitHubSignalsError, fetch_github_signals, find_contributor_leads
 
 
 class _FakeResponse:
@@ -83,6 +83,97 @@ class GitHubSignalsTests(unittest.TestCase):
             signals = fetch_github_signals("owner/empty", token="abc")
 
         self.assertEqual(signals.recent_commits_count, 0)
+
+    def test_recent_commit_lookup_encodes_default_branch(self) -> None:
+        responses = [
+            _FakeResponse(
+                {
+                    "full_name": "owner/repo",
+                    "html_url": "https://github.com/owner/repo",
+                    "description": None,
+                    "stargazers_count": 0,
+                    "forks_count": 0,
+                    "watchers_count": 0,
+                    "open_issues_count": 0,
+                    "default_branch": "release/2026",
+                    "pushed_at": None,
+                }
+            ),
+            _FakeResponse({}),
+            _FakeResponse([]),
+        ]
+
+        with patch("urllib.request.urlopen", side_effect=responses) as urlopen:
+            fetch_github_signals("owner/repo", token="abc")
+
+        commits_request = urlopen.call_args_list[2].args[0]
+        self.assertIn("sha=release%2F2026", commits_request.full_url)
+
+    def test_find_contributor_leads_deduplicates_and_skips_bots(self) -> None:
+        responses = [
+            _FakeResponse(
+                {
+                    "items": [
+                        {
+                            "full_name": "example/tool-one",
+                            "html_url": "https://github.com/example/tool-one",
+                        },
+                        {
+                            "full_name": "example/tool-two",
+                            "html_url": "https://github.com/example/tool-two",
+                        },
+                    ]
+                }
+            ),
+            _FakeResponse(
+                [
+                    {
+                        "login": "useful-dev",
+                        "type": "User",
+                        "html_url": "https://github.com/useful-dev",
+                    },
+                    {
+                        "login": "dependabot[bot]",
+                        "type": "Bot",
+                        "html_url": "https://github.com/apps/dependabot",
+                    },
+                ]
+            ),
+            _FakeResponse(
+                [
+                    {
+                        "login": "useful-dev",
+                        "type": "User",
+                        "html_url": "https://github.com/useful-dev",
+                    },
+                    {
+                        "login": "owner-to-skip",
+                        "type": "User",
+                        "html_url": "https://github.com/owner-to-skip",
+                    },
+                ]
+            ),
+        ]
+
+        with patch("urllib.request.urlopen", side_effect=responses):
+            leads = find_contributor_leads(
+                queries=["topic:maintainer-tools language:Python"],
+                max_repos=2,
+                max_contributors_per_repo=2,
+                exclude_users=["owner-to-skip"],
+            )
+
+        self.assertEqual(len(leads), 1)
+        self.assertEqual(leads[0].username, "useful-dev")
+        self.assertEqual(
+            leads[0].source_repositories,
+            ("example/tool-one", "example/tool-two"),
+        )
+        self.assertIn("topic:maintainer-tools language:Python", leads[0].matched_queries)
+
+    def test_find_contributor_leads_requires_positive_limits(self) -> None:
+        with self.assertRaises(GitHubSignalsError):
+            find_contributor_leads(queries=["topic:maintainer-tools"], max_repos=0)
 
 
 if __name__ == "__main__":

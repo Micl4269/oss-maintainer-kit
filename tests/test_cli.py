@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 import os
 import subprocess
@@ -7,6 +8,10 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
+
+from oss_maintainer_kit.cli import main
+from oss_maintainer_kit.github import GitHubSignalsError
 
 
 class CliTests(unittest.TestCase):
@@ -56,6 +61,45 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         data = json.loads(result.stdout)
         self.assertIn("documentation", data["suggested_labels"])
+
+    def test_security_scan_command_passes_clean_repo(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True, text=True)
+            (repo / "README.md").write_text("hello\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, check=True, capture_output=True, text=True)
+
+            result = self._run_cli("security-scan", "--repo", str(repo))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Security scan passed", result.stdout)
+
+    def test_security_scan_json_format(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True, text=True)
+            (repo / "README.md").write_text("hello\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, check=True, capture_output=True, text=True)
+
+            result = self._run_cli("security-scan", "--repo", str(repo), "--format", "json")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout), [])
+
+    def test_contributor_leads_reports_github_errors_without_traceback(self) -> None:
+        stderr = io.StringIO()
+        with patch(
+            "oss_maintainer_kit.cli.find_contributor_leads",
+            side_effect=GitHubSignalsError("rate limit exceeded"),
+        ):
+            with patch("sys.stderr", stderr):
+                result = main(["contributor-leads", "--query", "topic:maintainer-tools"])
+
+        self.assertEqual(result, 1)
+        self.assertIn("Contributor lead search failed", stderr.getvalue())
+        self.assertNotIn("Traceback", stderr.getvalue())
 
     def _run_cli(self, *args: str) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
