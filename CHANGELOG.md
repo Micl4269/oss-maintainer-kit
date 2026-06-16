@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Scheduled maintainer dashboard workflow and example.
 - Optional GitHub API usage signals for audit reports.
 - Initial maintainer readiness audit CLI.
 - Initial issue triage brief generator.

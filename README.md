@@ -14,6 +14,7 @@ It is built for maintainers who need a simple answer:
 - Markdown or JSON reports.
 - Optional public GitHub usage signals: stars, forks, open issues, latest release, and recent activity.
 - GitHub Action wrapper for scheduled audits.
+- Scheduled maintainer dashboard workflow that updates a stable GitHub issue.
 - Issue triage brief generator for labels, missing information, and next steps.
 - Codex for OSS planning guidance for maintainers preparing an application.
 - No runtime dependencies in v0.1.
@@ -102,6 +103,24 @@ jobs:
           github-repo: "Micl4269/oss-maintainer-kit"
 ```
 
+## Maintainer Dashboard
+
+Use [examples/maintainer-dashboard-workflow.yml](examples/maintainer-dashboard-workflow.yml)
+to create or update one stable issue titled `Maintainer dashboard` on a weekly
+schedule.
+
+The workflow needs:
+
+```yaml
+permissions:
+  contents: read
+  issues: write
+```
+
+It does not use AI or any external paid API. It runs the audit, builds a markdown
+issue body, then uses the GitHub CLI and the repository `GITHUB_TOKEN` to create
+or update the dashboard issue.
+
 ## What It Checks
 
 - README
@@ -118,6 +137,7 @@ jobs:
 - Git history
 - Codex for OSS usage plan
 - Optional public GitHub usage signals
+- Optional scheduled maintainer dashboard issue
 
 ## Codex for OSS Fit
 
