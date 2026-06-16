@@ -26,6 +26,14 @@ def fetch_github_signals(repo: str, token: str | None = None) -> GitHubSignals:
         latest_release = str(release_data.get("tag_name") or release_data.get("name") or "")
         latest_release_url = release_data.get("html_url")
 
+    default_branch = str(repo_data.get("default_branch") or "main")
+    commits_data = _github_json(
+        f"https://api.github.com/repos/{owner}/{name}/commits?per_page=30&sha={default_branch}",
+        token,
+        allow_not_found=True,
+    )
+    recent_commits_count = len(commits_data) if isinstance(commits_data, list) else 0
+
     return GitHubSignals(
         full_name=str(repo_data["full_name"]),
         url=str(repo_data["html_url"]),
@@ -34,10 +42,11 @@ def fetch_github_signals(repo: str, token: str | None = None) -> GitHubSignals:
         forks=int(repo_data.get("forks_count") or 0),
         watchers=int(repo_data.get("watchers_count") or 0),
         open_issues=int(repo_data.get("open_issues_count") or 0),
-        default_branch=str(repo_data.get("default_branch") or "main"),
+        default_branch=default_branch,
         latest_release=latest_release or None,
         latest_release_url=latest_release_url,
         pushed_at=repo_data.get("pushed_at"),
+        recent_commits_count=recent_commits_count,
     )
 
 

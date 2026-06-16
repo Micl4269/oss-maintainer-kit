@@ -20,6 +20,7 @@ class GitHubSignals:
     latest_release: str | None
     latest_release_url: str | None
     pushed_at: str | None
+    recent_commits_count: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -34,6 +35,7 @@ class GitHubSignals:
             "latest_release": self.latest_release,
             "latest_release_url": self.latest_release_url,
             "pushed_at": self.pushed_at,
+            "recent_commits_count": self.recent_commits_count,
         }
 
 
