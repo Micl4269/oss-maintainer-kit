@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -44,6 +45,15 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     audit.add_argument("--output", help="Write report to this path instead of stdout.")
     audit.add_argument(
+        "--github-repo",
+        help="Optional public GitHub repo in owner/name format for usage signals.",
+    )
+    audit.add_argument(
+        "--github-token-env",
+        default="GITHUB_TOKEN",
+        help="Environment variable containing a GitHub token for higher rate limits.",
+    )
+    audit.add_argument(
         "--fail-under",
         type=int,
         default=None,
@@ -66,7 +76,13 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _run_audit(args: argparse.Namespace) -> int:
-    report = audit_repository(Path(args.repo), profile=args.profile)
+    github_token = os.environ.get(args.github_token_env) if args.github_repo else None
+    report = audit_repository(
+        Path(args.repo),
+        profile=args.profile,
+        github_repo=args.github_repo,
+        github_token=github_token,
+    )
     rendered = render_audit_json(report) if args.format == "json" else render_audit_markdown(report)
     _write_output(rendered, args.output)
 
@@ -96,4 +112,3 @@ def _write_output(text: str, output: str | None) -> None:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

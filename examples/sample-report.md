@@ -2,13 +2,24 @@
 
 Repository: `.`
 Profile: `codex-oss`
-Score: **96/100**
+Score: **98/100**
 
 ## Summary
 
 - Passing checks: 13
 - Warnings: 1
 - Failures: 0
+
+## Public GitHub Signals
+
+- Repository: [Micl4269/oss-maintainer-kit](https://github.com/Micl4269/oss-maintainer-kit)
+- Stars: 0
+- Forks: 0
+- Watchers: 0
+- Open issues: 4
+- Default branch: `main`
+- Latest release: v0.1.0
+- Last push: 2026-06-16T02:45:16Z
 
 ## Codex for OSS
 
@@ -68,9 +79,9 @@ Score: **96/100**
 ### WARN: Git history is present
 
 - Check: `git-history`
-- Evidence: .git not found
-- Score: 5/10
-- Recommendation: Initialize git before publishing so releases and maintenance activity are visible.
+- Evidence: 1 commits
+- Score: 7/10
+- Recommendation: Build a visible history of releases, fixes, and reviews.
 
 ## Project basics
 

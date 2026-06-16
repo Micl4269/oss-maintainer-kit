@@ -31,6 +31,7 @@ class CliTests(unittest.TestCase):
             data = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(data["profile"], "codex-oss")
             self.assertIn("score", data)
+            self.assertIsNone(data["github_signals"])
 
     def test_fail_under_returns_two(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -71,4 +72,3 @@ class CliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

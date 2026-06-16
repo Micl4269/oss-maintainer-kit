@@ -4,10 +4,16 @@ import re
 import subprocess
 from pathlib import Path
 
+from .github import GitHubSignalsError, fetch_github_signals
 from .models import AuditReport, Check, TriageBrief
 
 
-def audit_repository(repo_path: Path, profile: str = "codex-oss") -> AuditReport:
+def audit_repository(
+    repo_path: Path,
+    profile: str = "codex-oss",
+    github_repo: str | None = None,
+    github_token: str | None = None,
+) -> AuditReport:
     repo = repo_path.resolve()
     checks = [
         _file_check(
@@ -102,7 +108,21 @@ def audit_repository(repo_path: Path, profile: str = "codex-oss") -> AuditReport
     ]
     if profile != "codex-oss":
         notes.append(f"Profile '{profile}' uses the same checks in v0.1.0.")
-    return AuditReport(repo_path=repo, profile=profile, checks=checks, notes=notes)
+
+    github_signals = None
+    if github_repo:
+        try:
+            github_signals = fetch_github_signals(github_repo, github_token)
+        except GitHubSignalsError as exc:
+            notes.append(f"GitHub signals unavailable for {github_repo}: {exc}")
+
+    return AuditReport(
+        repo_path=repo,
+        profile=profile,
+        checks=checks,
+        notes=notes,
+        github_signals=github_signals,
+    )
 
 
 def build_triage_brief(title: str, body: str = "") -> TriageBrief:

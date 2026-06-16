@@ -12,6 +12,7 @@ It is built for maintainers who need a simple answer:
 
 - Repository readiness audit with a 0-100 score.
 - Markdown or JSON reports.
+- Optional public GitHub usage signals: stars, forks, open issues, latest release, and recent activity.
 - GitHub Action wrapper for scheduled audits.
 - Issue triage brief generator for labels, missing information, and next steps.
 - Codex for OSS planning guidance for maintainers preparing an application.
@@ -40,6 +41,25 @@ Run an audit:
 
 ```bash
 PYTHONPATH=src python -m oss_maintainer_kit audit --repo . --output maintainer-readiness-report.md
+```
+
+Include public GitHub usage signals:
+
+```bash
+PYTHONPATH=src python -m oss_maintainer_kit audit \
+  --repo . \
+  --github-repo Micl4269/oss-maintainer-kit \
+  --output maintainer-readiness-report.md
+```
+
+For higher GitHub API rate limits, set `GITHUB_TOKEN` or pass a different token
+environment variable:
+
+```bash
+PYTHONPATH=src python -m oss_maintainer_kit audit \
+  --repo . \
+  --github-repo Micl4269/oss-maintainer-kit \
+  --github-token-env MY_GITHUB_TOKEN
 ```
 
 Fail CI if the score is too low:
@@ -79,6 +99,7 @@ jobs:
           repo-path: "."
           output: "maintainer-readiness-report.md"
           fail-under: "80"
+          github-repo: "Micl4269/oss-maintainer-kit"
 ```
 
 ## What It Checks
@@ -96,6 +117,7 @@ jobs:
 - Package metadata
 - Git history
 - Codex for OSS usage plan
+- Optional public GitHub usage signals
 
 ## Codex for OSS Fit
 
@@ -113,4 +135,3 @@ PYTHONPATH=src python -m oss_maintainer_kit audit --repo .
 ## License
 
 MIT
-

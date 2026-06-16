@@ -15,6 +15,10 @@ inputs:
     description: Optional minimum score. Set to 0 to disable failure.
     required: false
     default: "0"
+  github-repo:
+    description: Optional GitHub repository in owner/name format for public usage signals.
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -32,5 +36,7 @@ runs:
         if [ "${{ inputs.fail-under }}" != "0" ]; then
           args+=(--fail-under "${{ inputs.fail-under }}")
         fi
+        if [ -n "${{ inputs.github-repo }}" ]; then
+          args+=(--github-repo "${{ inputs.github-repo }}")
+        fi
         python -m oss_maintainer_kit "${args[@]}"
-

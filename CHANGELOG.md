@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Optional GitHub API usage signals for audit reports.
 - Initial maintainer readiness audit CLI.
 - Initial issue triage brief generator.
 - Composite GitHub Action wrapper.
@@ -16,4 +17,3 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - First public release candidate.
-
